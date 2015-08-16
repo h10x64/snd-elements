@@ -1,0 +1,98 @@
+<!--
+@license
+
+The MIT License (MIT)
+copyright (c) 2015 n_h <h.10x64@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+-->
+<link rel="import" href="../polymer/polymer.html">
+
+<script src="../sndjs/dist/snd.js"></script>
+<script src="../sndjs/dist/class/required/snd.Exception.js"></script>
+<script src="../sndjs/dist/class/required/snd.AudioMaster.js"></script>
+<script src="../sndjs/dist/class/required/snd.AudioDataManager.js"></script>
+<script src="../sndjs/dist/snd.util.js"></script>
+
+<!--
+@demo
+-->
+<dom-module id='snd-base'>
+    <script>
+        snd.Polymer = {};
+        snd.Polymer.util = {};
+
+        snd.Polymer.util.connect = function(_this, sndObj, newConStr, oldConStr) {
+            // var newArray = (newConStr) ? newConStr.split(',') : [];
+            // var oldArray = (oldConStr) ? oldConStr.split(',') : [];
+
+            // var diff = snd.Polymer.util.getDiff(newArray, oldArray);
+
+            diff = {
+                added: (newConStr) ? newConStr.split(',') : [],
+                removed: (oldConStr) ? oldConStr.split(',') : []
+            }
+
+            for (var key in diff.removed) {
+                var selector = diff.removed[key];
+
+                if (selector.toUpperCase().trim() == 'MASTER') {
+                    sndObj.disconnect(snd.MASTER);
+                    continue;
+                }
+
+                var target = document.querySelector(selector.trim());
+                if (target && target._sndobj) {
+                    sndObj.disconnect(target._sndobj);
+                }
+            }
+
+            for (var key in diff.added) {
+                var selector = diff.added[key];
+
+                if (selector.toUpperCase().trim() == 'MASTER') {
+                    sndObj.connect(snd.MASTER);
+                    continue;
+                }
+
+                var target = document.querySelector(selector.trim());
+                if (target && target._sndobj) {
+                    sndObj.connect(target._sndobj);
+                }
+            }
+        };
+
+        snd.Polymer.util.getDiff = function(newArray, oldArray) {
+            var ret = {added: [], removed: []};
+
+            for (var key in newArray) {
+                if (oldArray.indexOf(newArray[key]) < 0) {
+                    ret.added.push(newArray[key]);
+                }
+            }
+            for (var key in oldArray) {
+                if (newArray.indexOf(oldArray[key]) < 0) {
+                    ret.removed.push(oldArray[key]);
+                }
+            }
+
+            return ret;
+        };
+    </script>
+</dom-module>

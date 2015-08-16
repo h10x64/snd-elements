@@ -1,0 +1,133 @@
+<!--
+@license
+
+The MIT License (MIT)
+copyright (c) 2015 n_h <h.10x64@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="./snd-source.html">
+
+<script src="../sndjs/dist/class/optional/snd.OscillatorSource.js"></script>
+
+<!--
+@demo
+-->
+<dom-module id="snd-oscillator">
+    <template>
+        <snd-param class="frequency"></snd-param>
+        <snd-param class="detune"></snd-param>
+    </template>
+    <script>
+        Polymer({
+            is: "snd-oscillator",
+
+            properties: {
+                author: {
+                    type: Object,
+                    value: function() {
+                        return {
+                            name: "n_h"
+                        }
+                    }
+                },
+                frequency: {
+                    type: Number,
+                    observer: "_setFrequency"
+                },
+                detune: {
+                    type: Number,
+                    observer: "_setDetune"
+                },
+                oscillatorType: {
+                    type: String,
+                    observer: "_setOscillatorType"
+                },
+                connect: {
+                    type: String,
+                    observer: "_setConnect"
+                }
+            },
+            // Life Time
+            created: function() {
+                this._sndobj = new snd.OscillatorSource(this.id);
+            },
+            attached: function() {
+                // Setup AudioParams
+                this.$$("snd-param.frequency")._sndobj = this._sndobj.frequencyParam;
+                this.$$("snd-param.detune")._sndobj = this._sndobj.detuneParam;
+                
+                // Connect
+                this.async(function() {
+                    this._setConnect(this.connect, null);
+                });
+            },
+            attributeChanged: function(attrName, type) {
+            },
+            detached: function() {
+            },
+            // Method //
+            start: function(when, offset, duration) {
+                if (this._sndobj) {
+                    this._sndobj.start(when, offset, duration);
+                }
+            },
+            stop: function(when) {
+                if (this._sndobj) {
+                    this._sndobj.stop(when);
+                }
+            },
+            // Observer //
+            _setFrequency: function(newVal, oldVal) {
+                if (this._sndobj) {
+                    this._sndobj.frequency = newVal;
+                }
+            },
+            _setDetune: function(newVal, oldVal) {
+                if (this._sndobj) {
+                    this._sndobj.detune = newVal;
+                }
+            },
+            _setOscillatorType: function(newVal, oldVal) {
+                if (this._sndobj) {
+                    if (typeof(newVal.toLowerCase) == 'function') {
+                        var lowerVal = newVal.toLowerCase();
+                        if (lowerVal != snd.SINE
+                                && lowerVal != snd.SQUARE
+                                && lowerVal != snd.SAWTOOTH
+                                && lowerVal != snd.TRIANGLE) {
+                            // waveType == 'custom' or else. (error)
+
+                            console.log("snd-oscillator is not support \"" + lowerVal + "\".\nPlease select oscillator type from 'sine', 'square', 'sawtooth' and 'triangle'.");
+                            return;
+                        }
+
+                        this._sndobj.oscillatorType = lowerVal;
+                    }
+                }
+            },
+            _setConnect: function(newVal, oldVal) {
+                if (this._sndobj) {
+                    snd.Polymer.util.connect(this, this._sndobj, newVal, oldVal);
+                }
+            }
+        });
+    </script>
+</dom-module>

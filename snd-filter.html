@@ -1,0 +1,138 @@
+<!--
+@license
+
+The MIT License (MIT)
+copyright (c) 2015 n_h <h.10x64@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="./snd-audiounit.html">
+<link rel="import" href="./snd-param.html">
+
+<script src="../sndjs/dist/class/optional/snd.BiquadFilter.js"></script>
+
+<dom-module id='snd-filter'>
+    <template>
+        <snd-param class="frequency"></snd-param>
+        <snd-param class="detune"></snd-param>
+        <snd-param class="Q"></snd-param>
+        <snd-param class="gain"></snd-param>
+    </template>
+    <script>
+        Polymer({
+            is: "snd-filter",
+
+            properties: {
+                author: {
+                    type: Object,
+                    value: function() {
+                        return {
+                            name: "n_h"
+                        }
+                    }
+                },
+                connect: {
+                    type: String,
+                    observer: "_setConnect"
+                },
+                type: {
+                    type: String,
+                    observer: "_setType"
+                },
+                frequency: {
+                    type: Number,
+                    observer: "_setFrequency"
+                },
+                detune: {
+                    type: Number,
+                    observer: "_setDetune"
+                },
+                Q: {
+                    type: Number,
+                    observer: "_setQ"
+                },
+                gain: {
+                    type: Number,
+                    observer: "_setGain"
+                }
+            },
+            // Life Time //
+            created: function() {
+                this._sndobj = new snd.BiquadFilter(this.id);
+            },
+            attached: function() {
+                this.$$(".frequency")._sndobj = this._sndobj.frequencyParam;
+                this.$$(".detune")._sndobj = this._sndobj.detuneParam;
+                this.$$(".Q")._sndobj = this._sndobj.QParam;
+                this.$$(".gain")._sndobj = this._sndobj.gainParam;
+                this.async(function() {
+                    this._setConnect(this.connect, null);
+                });
+            },
+            attributeChanged: function(attrName, type) {
+            },
+            detached: function() {
+            },
+            // Observer //
+            _setConnect: function(newVal, oldVal) {
+                if (this._sndobj) {
+                    snd.Polymer.util.connect(this, this._sndobj, newVal, oldVal);
+                }
+            },
+            _setType: function(newVal, oldVal) {
+                if (this._sndobj) {
+                    if (newVal != snd.LOWPASS
+                            && newVal != snd.HIGHPASS
+                            && newVal != snd.BANDPASS
+                            && newVal != snd.LOWSHELF
+                            && newVal != snd.HIGHSHELF
+                            && newVal != snd.PEAKING
+                            && newVal != snd.NOTCH
+                            && newVal != snd.ALLPASS) {
+                        console.log("snd-filter is not supported \"" + newVal + "\". Please select value from 'lowpass','highpass','bandpass','lowshelf','highshelf','peaking','notch' and 'allpass'.");
+                        return;
+                    }
+                    
+                    this._sndobj.type = newVal;
+                }
+            },
+            _setFrequency: function(newVal, oldVal) {
+                if (this._sndobj) {
+                    this._sndobj.frequency = newVal;
+                }
+            },
+            _setDetune: function(newVal, oldVal) {
+                if (this._sndobj) {
+                    this._sndobj.detune = newVal;
+                }
+            },
+            _setQ: function(newVal, oldVal) {
+                if (this._sndobj) {
+                    this._sndobj.Q = newVal;
+                }
+            },
+            _setGain: function(newVal, oldVal) {
+                if (this._sndobj) {
+                    this._sndobj.gain = newVal;
+                }
+            }
+        });
+    </script>
+</dom-module>

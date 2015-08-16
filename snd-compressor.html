@@ -1,0 +1,131 @@
+<!--
+@license
+
+The MIT License (MIT)
+copyright (c) 2015 n_h <h.10x64@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="./snd-source.html">
+<link rel="import" href="./snd-param.html">
+
+<script src="../sndjs/dist/class/optional/snd.DynamicsCompressor.js"></script>
+<dom-module id='snd-Compressor'>
+    <template>
+        <snd-param class="attack"></snd-param>
+        <snd-param class="knee"></snd-param>
+        <snd-param class="ratio"></snd-param>
+        <snd-param class="release"></snd-param>
+        <snd-param class="threshold"></snd-param>
+    </template>
+    <script>
+        lastOnload = null;
+        
+        Polymer({
+            is: "snd-gain",
+
+            properties: {
+                author: {
+                    type: Object,
+                    value: function() {
+                        return {
+                            name: "n_h"
+                        }
+                    }
+                },
+                connect: {
+                    type: String,
+                    observer: "_setConnect"
+                },
+                attack: {
+                    type: String,
+                    observer: "_setAttack"
+                },
+                knee: {
+                    type: String,
+                    observer: "_setKnee"
+                },
+                ratio: {
+                    type: String,
+                    observer: "_setRatio"
+                },
+                release: {
+                    type: String,
+                    observer: "_setRelease"
+                },
+                threshold: {
+                    type: String,
+                    observer: "_setThreshold"
+                }
+            },
+            // Life Time //
+            created: function() {
+                this._sndobj = new snd.DynamicsCompressor(this.id);
+            },
+            attached: function() {
+                // Setup AudioParams
+                this.$$("snd-param.attack")._sndobj = this._sndobj.attackParam;
+                this.$$("snd-param.knee")._sndobj = this._sndobj.kneeParam;
+                this.$$("snd-param.ratio")._sndobj = this._sndobj.ratioParam;
+                this.$$("snd-param.threshold")._sndobj = this._sndobj.thresholdParam;
+                this.$$("snd-param.release")._sndobj = this._sndobj.releaseParam;
+                // Connect
+                this.async(function() {
+                    this._setConnect(this.connect, null);
+                });
+            },
+            attributeChanged: function(attrName, type) {
+            },
+            detached: function() {
+            },
+            // Observer //
+            _setConnect: function(newVal, oldVal) {
+                if (this._sndobj) {
+                    snd.Polymer.util.connect(this, this._sndobj, newVal, oldVal);
+                }
+            },
+            _setAttack: function(newVal, oldVal) {
+                if (this._sndobj) {
+                    this._sndobj.attack = newVal;
+                }
+            },
+            _setKnee: function(newVal, oldVal) {
+                if (this._sndobj) {
+                    this._sndobj.knee = newVal;
+                }
+            },
+            _setRatio: function(newVal, oldVal) {
+                if (this._sndobj) {
+                    this._sndobj.ratio = newVal;
+                }
+            },
+            _setThreshold: function(newVal, oldVal) {
+                if (this._sndobj) {
+                    this._sndobj.threshold = newVal;
+                }
+            },
+            _setRelease: function(newVal, oldVal) {
+                if (this._sndobj) {
+                    this._sndobj.release = newVal;
+                }
+            }
+        });
+    </script>
+</dom-module>

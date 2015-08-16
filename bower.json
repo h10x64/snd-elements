@@ -1,0 +1,31 @@
+{
+  "name": "snd-elements",
+  "version": "0.0.0",
+  "authors": [
+    "n_h <h.10x64@gmail.com>"
+  ],
+  "description": "Web Audio API Wrapper Elements.",
+  "keywords": [
+    "web-component",
+    "web-components",
+    "polymer",
+    "Web Audio API",
+    "Sound",
+    "Audio"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/n_h/snd-elements/",
+  "ignore": [
+    "/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.0.0",
+    "sndjs": "~1.0.20150816"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "*"
+  }
+}
