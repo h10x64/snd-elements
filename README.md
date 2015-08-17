@@ -10,13 +10,14 @@ If you not installed Bower yet, please following this.
 
     npm install -g bower
 
-Then, you can get components via Bower.
-
-    bower install
-
 [polyserve](https://github.com/PolymerLabs/polyserve) is needed for Demo.
 
     npm install -g polyserve
+
+Then, you can get required components via Bower.
+
+    cd /path/to/snd-components
+    bower install
 
 ## Demo
 
@@ -27,9 +28,9 @@ Plese type this commands in your console.
 
 So, you can see some demo on [localhost](http://localhost:8080/components/snd-elements/demo).
 
-## 使い方
+## How to use
 
-ソースとデモをご確認ください。
+Please see demo and sources.
 
 ## License
 
@@ -69,9 +70,10 @@ Bowerをインストールしていない場合、
 上記のコマンドをコンソールで実行し、インストールしてください。
 その後、
 
+    cd /path/to/snd-components
     bower install
 
-とすれば必要なコンポーネントがインストールされます。
+とすればsnd-componentsに必要なコンポーネントがインストールされます。
 また、付属のデモを見るために[polyserve](https://github.com/PolymerLabs/polyserve)があると便利です。
 
     npm install -g polyserve
